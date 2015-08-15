@@ -13,6 +13,11 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+
+    # 演習9.6 の 6
+    if signed_in?
+      redirect_to root_path
+    end
   end
 
   def create
@@ -39,8 +44,11 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User destroyed."
+    user = User.find(params[:id])
+    unless current_user?(user)
+      user.destroy
+      flash[:success] = "User destroyed."
+    end
     redirect_to users_url
   end
 
